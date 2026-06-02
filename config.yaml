@@ -1,0 +1,5 @@
+server:
+  port: 8001
+  host: 0.0.0.0
+foto_dir: E:/FOTO
+outlet_name: SISTEM PARKIR
