@@ -1,352 +1,769 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QRIS Display — SISTEM PARKIR</title>
+<title>QRIS Payment Display</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=DM+Sans:wght@300..700&display=swap" rel="stylesheet">
+<!-- QR Code generator -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #0a0a1a;
-    color: #fff;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .container {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 100%);
-  }
-  .header {
-    background: linear-gradient(90deg, #1a1a4e, #2a1a5e);
-    padding: 20px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 3px solid #00d4ff;
-  }
-  .header h1 {
-    font-size: 2.2rem;
-    letter-spacing: 2px;
-    color: #00d4ff;
-    text-shadow: 0 0 20px rgba(0,212,255,0.3);
-  }
-  .header .time {
-    font-size: 1.8rem;
-    color: #aaa;
-    font-weight: 300;
-  }
-  .main-content {
-    flex: 1;
-    display: flex;
-    padding: 20px;
-    gap: 20px;
-  }
-  .info-panel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  .info-card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 16px;
-    padding: 20px 30px;
-    backdrop-filter: blur(10px);
-  }
-  .info-card .label {
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #888;
-    margin-bottom: 4px;
-  }
-  .info-card .value {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #fff;
-  }
-  .info-card .value.big { font-size: 3rem; }
-  .info-card .value.highlight { color: #00ff88; }
-  .info-card .value.tarif { color: #ffcc00; font-size: 3.5rem; }
-  .qris-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
-    padding: 30px;
-    min-width: 380px;
-  }
-  .qris-section .qris-label {
-    font-size: 0.9rem;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 10px;
-  }
-  .qris-section .qris-text {
-    font-family: 'Courier New', monospace;
-    font-size: 1.1rem;
-    color: #00d4ff;
-    word-break: break-all;
-    text-align: center;
-    line-height: 1.5;
-    max-width: 400px;
-  }
-  .qris-section .qris-qr {
-    width: 200px;
-    height: 200px;
-    background: #fff;
-    border-radius: 12px;
-    margin-top: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #333;
-    font-size: 0.8rem;
-  }
-  .photo-panel {
-    width: 420px;
-    min-width: 320px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .photo-panel .photo-frame {
-    flex: 1;
-    background: #111;
-    border-radius: 16px;
-    border: 2px solid rgba(255,255,255,0.1);
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 300px;
-  }
-  .photo-panel .photo-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  .photo-panel .photo-frame .placeholder {
-    color: #555;
-    font-size: 1rem;
-    text-align: center;
-  }
-  .photo-panel .nopol-card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    padding: 15px;
-    text-align: center;
-  }
-  .photo-panel .nopol-card .label {
-    font-size: 0.8rem;
-    color: #888;
-    text-transform: uppercase;
-  }
-  .photo-panel .nopol-card .value {
-    font-size: 2.4rem;
-    font-weight: 800;
-    letter-spacing: 3px;
-    color: #ffcc00;
-  }
-  .idle-screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    gap: 20px;
-  }
-  .idle-screen h1 {
-    font-size: 4rem;
-    color: #00d4ff;
-    text-shadow: 0 0 40px rgba(0,212,255,0.2);
-  }
-  .idle-screen p {
-    font-size: 1.5rem;
-    color: #666;
-  }
-  .hidden { display: none !important; }
-  .status-bar {
-    padding: 8px 40px;
-    background: rgba(0,0,0,0.3);
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    color: #666;
-    border-top: 1px solid rgba(255,255,255,0.05);
-  }
-  .status-bar .dot {
-    display: inline-block;
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    margin-right: 6px;
-  }
-  .status-bar .dot.green { background: #00ff88; }
-  .status-bar .dot.red { background: #ff4444; }
+/* ─── Design Tokens ─────────────────────────────────────────── */
+:root {
+  --font-display: 'DM Sans', 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --text-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
+  --text-sm:   clamp(0.875rem, 0.8rem  + 0.35vw, 1rem);
+  --text-base: clamp(1rem,     0.95rem + 0.25vw, 1.125rem);
+  --text-lg:   clamp(1.125rem, 1rem    + 0.75vw, 1.5rem);
+  --text-xl:   clamp(1.5rem,   1.2rem  + 1.25vw, 2.25rem);
+  --text-2xl:  clamp(2rem,     1.2rem  + 2.5vw,  3.5rem);
+
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem;
+  --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem;
+  --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem;
+
+  --radius-sm: 0.375rem; --radius-md: 0.5rem;
+  --radius-lg: 0.75rem; --radius-xl: 1rem; --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+  --transition: 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Dark theme — deep slate, accent teal */
+[data-theme="dark"] {
+  --bg:         #0d1117;
+  --surface:    #161b22;
+  --surface-2:  #1c2333;
+  --surface-3:  #21262d;
+  --border:     rgba(255,255,255,0.08);
+  --text:       #e6edf3;
+  --text-muted: #8b949e;
+  --text-faint: #484f58;
+  --accent:     #2dd4bf;
+  --accent-dim: rgba(45,212,191,0.15);
+  --accent-glow:rgba(45,212,191,0.25);
+  --success:    #3fb950;
+  --success-dim:rgba(63,185,80,0.15);
+  --success-glow:rgba(63,185,80,0.4);
+  --gold:       #f0c040;
+  --gold-dim:   rgba(240,192,64,0.15);
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg:  0 16px 48px rgba(0,0,0,0.6);
+}
+
+/* ─── Reset ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%; height: 100%; overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Layout ─────────────────────────────────────────────────── */
+#app {
+  width: 100vw; height: 100vh;
+  display: grid;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Background ambient glow ───────────────────────────────── */
+.bg-glow {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 50%, rgba(45,212,191,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 50%, rgba(45,212,191,0.03) 0%, transparent 70%);
+  transition: opacity 0.8s var(--transition);
+}
+.bg-glow.paid {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(63,185,80,0.08) 0%, transparent 70%);
+}
+
+/* ─── IDLE STATE ─────────────────────────────────────────────── */
+#state-idle {
+  position: absolute; inset: 0; z-index: 10;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: var(--space-8);
+  opacity: 1;
+  transition: opacity 0.5s var(--transition);
+}
+#state-idle.hidden { opacity: 0; pointer-events: none; }
+
+.idle-logo {
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-4);
+}
+.idle-logo svg { width: clamp(64px, 8vw, 96px); height: auto; opacity: 0.9; }
+.idle-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+.idle-subtitle {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: calc(-1 * var(--space-4));
+}
+
+.idle-clock {
+  font-size: var(--text-xl);
+  font-weight: 300;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+}
+
+.idle-status-bar {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+}
+.idle-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.5; transform:scale(0.8); }
+}
+
+/* ─── WAITING STATE ──────────────────────────────────────────── */
+#state-waiting {
+  position: absolute; inset: 0; z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr auto;
+  gap: var(--space-6);
+  padding: var(--space-8);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s var(--transition);
+}
+#state-waiting.active { opacity: 1; pointer-events: all; }
+
+/* Header bar */
+.w-header {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+}
+.w-header-left { display:flex; align-items:center; gap:var(--space-3); }
+.w-outlet-name {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text);
+}
+.w-notrans {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.w-header-clock {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Left panel — vehicle info + photo */
+.w-left {
+  display: flex; flex-direction: column; gap: var(--space-5);
+}
+
+.vehicle-photo-wrap {
+  position: relative;
+  width: 100%; aspect-ratio: 16/10;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+}
+.vehicle-photo-wrap img {
+  width: 100%; height: 100%; object-fit: cover;
+  display: block;
+}
+.vehicle-photo-wrap .no-photo {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--space-3);
+  color: var(--text-faint);
+}
+.vehicle-photo-wrap .no-photo svg { width: 48px; height: 48px; opacity: 0.4; }
+
+.nopol-badge {
+  position: absolute; bottom: var(--space-3); left: var(--space-3);
+  background: rgba(13,17,23,0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.08em;
+}
+
+.info-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);
+}
+.info-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+.info-label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-1);
+}
+.info-value {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.info-card.tarif .info-value {
+  font-size: var(--text-lg);
+  color: var(--accent);
+}
+
+/* Right panel — QR */
+.w-right {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--space-5);
+}
+
+.qr-container {
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+}
+
+.qr-instruction {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  text-align: center;
+}
+.qr-instruction strong { color: var(--text); }
+
+.qr-box {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.1), var(--shadow-md);
+  position: relative;
+}
+/* Scanning animation overlay */
+.qr-scan-line {
+  position: absolute; left: var(--space-4); right: var(--space-4);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  animation: scan-move 2.5s ease-in-out infinite;
+  border-radius: 1px;
+  pointer-events: none;
+}
+@keyframes scan-move {
+  0% { top: var(--space-4); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: calc(100% - var(--space-4)); opacity: 0; }
+}
+
+#qrcode canvas, #qrcode img { display: block; }
+
+.qr-amount-big {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+.qr-amount-label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+/* Polling indicator */
+.polling-bar {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; justify-content: center; gap: var(--space-3);
+  padding: var(--space-3);
+}
+.polling-dots { display: flex; gap: var(--space-2); }
+.polling-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  animation: poll-bounce 1.4s ease-in-out infinite;
+}
+.polling-dot:nth-child(2) { animation-delay: 0.2s; }
+.polling-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes poll-bounce {
+  0%,80%,100% { transform: scale(0.6); opacity:0.4; }
+  40% { transform: scale(1); opacity:1; }
+}
+.polling-text {
+  font-size: var(--text-xs);
+  color: var(--text-faint);
+}
+
+/* ─── PAID STATE ─────────────────────────────────────────────── */
+#state-paid {
+  position: absolute; inset: 0; z-index: 20;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: var(--space-8);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s var(--transition);
+}
+#state-paid.active { opacity: 1; pointer-events: all; }
+
+.paid-icon {
+  width: clamp(80px, 10vw, 120px);
+  height: clamp(80px, 10vw, 120px);
+  border-radius: 50%;
+  background: var(--success-dim);
+  border: 2px solid var(--success);
+  display: flex; align-items: center; justify-content: center;
+  animation: paid-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  box-shadow: 0 0 40px var(--success-glow);
+}
+@keyframes paid-pop {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+.paid-icon svg { width: 50%; height: 50%; }
+
+.paid-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--success);
+  letter-spacing: -0.02em;
+  text-align: center;
+  animation: fade-up 0.4s 0.2s ease both;
+}
+.paid-subtitle {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  text-align: center;
+  animation: fade-up 0.4s 0.3s ease both;
+}
+.paid-amount {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  animation: fade-up 0.4s 0.35s ease both;
+}
+.paid-method {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-6);
+  background: var(--success-dim);
+  border: 1px solid rgba(63,185,80,0.3);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  color: var(--success);
+  animation: fade-up 0.4s 0.4s ease both;
+}
+.paid-nopol {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.08em;
+  animation: fade-up 0.4s 0.45s ease both;
+}
+
+@keyframes fade-up {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* Confetti canvas */
+#confetti-canvas {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 30;
+}
+
+/* ─── Scanline / noise texture ───────────────────────────────── */
+.scanlines {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  opacity: 0.5;
+}
+
+/* ─── Separator line ─────────────────────────────────────────── */
+.divider {
+  width: 1px;
+  background: var(--border);
+  margin: var(--space-2) 0;
+}
 </style>
 </head>
 <body>
 
-<div id="idleScreen" class="idle-screen">
-  <h1>⏳ SISTEM PARKIR</h1>
-  <p>Menunggu transaksi...</p>
-</div>
+<div class="bg-glow" id="bg-glow"></div>
+<div class="scanlines"></div>
+<canvas id="confetti-canvas"></canvas>
 
-<div id="mainContainer" class="container hidden">
-  <div class="header">
-    <h1 id="outletName">SISTEM PARKIR</h1>
-    <div class="time" id="currentTime">--:--:--</div>
-  </div>
+<div id="app">
 
-  <div class="main-content">
-    <!-- Left: Info -->
-    <div class="info-panel">
-      <div class="info-card">
-        <div class="label">No. Transaksi</div>
-        <div class="value big" id="notrans">—</div>
-      </div>
-      <div class="info-card">
-        <div class="label">Jenis Kendaraan</div>
-        <div class="value" id="jenisKend">—</div>
-      </div>
-      <div class="row" style="display:flex;gap:15px;">
-        <div class="info-card" style="flex:1;">
-          <div class="label">Jam Masuk</div>
-          <div class="value" id="jamMasuk">—</div>
+  <!-- ── IDLE ─────────────────────────────────────── -->
+  <section id="state-idle" aria-live="polite">
+    <div class="idle-logo">
+      <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Parkir logo">
+        <rect x="8" y="20" width="64" height="44" rx="6" stroke="#2dd4bf" stroke-width="2.5" fill="rgba(45,212,191,0.06)"/>
+        <path d="M20 32 L20 52" stroke="#2dd4bf" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M20 32 L32 32 C38 32 42 36 42 40 C42 44 38 48 32 48 L20 48" stroke="#2dd4bf" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="56" cy="42" r="8" stroke="#e6edf3" stroke-width="2" opacity="0.3"/>
+        <path d="M52 42 L55 45 L60 39" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <h1 class="idle-title" id="idle-outlet-name">SISTEM PARKIR</h1>
+      <p class="idle-subtitle">Silakan tunjukkan karcis kepada petugas</p>
+    </div>
+    <div class="idle-clock" id="idle-clock">--:--:--</div>
+    <div class="idle-status-bar">
+      <div class="idle-dot"></div>
+      <span style="font-size:var(--text-sm);color:var(--text-muted)">Siap melayani</span>
+    </div>
+  </section>
+
+  <!-- ── WAITING (QR displayed) ───────────────────── -->
+  <section id="state-waiting" aria-live="assertive" aria-label="Halaman pembayaran QRIS">
+
+    <!-- Header -->
+    <div class="w-header">
+      <div class="w-header-left">
+        <svg width="28" height="28" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+          <rect x="8" y="20" width="64" height="44" rx="6" stroke="#2dd4bf" stroke-width="3" fill="rgba(45,212,191,0.06)"/>
+          <path d="M20 32 L20 52" stroke="#2dd4bf" stroke-width="3" stroke-linecap="round"/>
+          <path d="M20 32 L32 32 C38 32 42 36 42 40 C42 44 38 48 32 48 L20 48" stroke="#2dd4bf" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div>
+          <div class="w-outlet-name" id="w-outlet-name">PARKIR</div>
+          <div class="w-notrans" id="w-notrans">-</div>
         </div>
-        <div class="info-card" style="flex:1;">
-          <div class="label">Durasi</div>
-          <div class="value highlight" id="durasi">—</div>
+      </div>
+      <div class="w-header-clock" id="w-clock">--:--:--</div>
+    </div>
+
+    <!-- Left: photo + info -->
+    <div class="w-left">
+      <div class="vehicle-photo-wrap" id="photo-wrap">
+        <div class="no-photo" id="no-photo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <rect x="2" y="7" width="20" height="13" rx="2"/>
+            <path d="M5 7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/>
+            <circle cx="8.5" cy="13.5" r="1.5"/>
+            <circle cx="15.5" cy="13.5" r="1.5"/>
+          </svg>
+          <span style="font-size:var(--text-xs)">Foto tidak tersedia</span>
+        </div>
+        <img id="vehicle-photo" src="" alt="Foto kendaraan" style="display:none"
+             onerror="this.style.display='none';document.getElementById('no-photo').style.display='flex'">
+        <div class="nopol-badge" id="nopol-badge">-</div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-label">Jenis Kendaraan</div>
+          <div class="info-value" id="info-jenis">-</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Jam Masuk</div>
+          <div class="info-value" id="info-masuk">-</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Durasi</div>
+          <div class="info-value" id="info-durasi">-</div>
+        </div>
+        <div class="info-card tarif">
+          <div class="info-label">Tarif</div>
+          <div class="info-value" id="info-tarif">-</div>
         </div>
       </div>
-      <div class="info-card" style="flex:1;display:flex;flex-direction:column;justify-content:center;">
-        <div class="label">Tarif Parkir</div>
-        <div class="value tarif" id="tarif">Rp 0</div>
+    </div>
+
+    <!-- Right: QR -->
+    <div class="w-right">
+      <div class="qr-container">
+        <div class="qr-amount-label">Total Pembayaran</div>
+        <div class="qr-amount-big" id="qr-amount-big">Rp 0</div>
+
+        <div class="qr-box" id="qr-box">
+          <div class="qr-scan-line"></div>
+          <div id="qrcode"></div>
+        </div>
+
+        <div class="qr-instruction">
+          Scan dengan aplikasi <strong>e-wallet</strong> atau <strong>mobile banking</strong> apapun
+        </div>
       </div>
     </div>
 
-    <!-- Center: QRIS -->
-    <div class="qris-section" id="qrisSection">
-      <div class="qris-label">QRIS Pembayaran</div>
-      <div class="qris-text" id="qrisText">—</div>
+    <!-- Polling indicator footer -->
+    <div class="polling-bar">
+      <div class="polling-dots">
+        <div class="polling-dot"></div>
+        <div class="polling-dot"></div>
+        <div class="polling-dot"></div>
+      </div>
+      <span class="polling-text">Menunggu konfirmasi pembayaran...</span>
     </div>
 
-    <!-- Right: Photo & Nopol -->
-    <div class="photo-panel">
-      <div class="nopol-card">
-        <div class="label">Nomor Polisi</div>
-        <div class="value" id="nopol">—</div>
-      </div>
-      <div class="photo-frame">
-        <img id="fotoImg" src="" alt="Foto Kendaraan" style="display:none;">
-        <div class="placeholder" id="fotoPlaceholder">📷 Foto kendaraan</div>
-      </div>
-    </div>
-  </div>
+  </section>
 
-  <div class="status-bar">
-    <span><span class="dot green"></span><span id="statusText">Connected</span></span>
-    <span id="paidByInfo">—</span>
-  </div>
-</div>
+  <!-- ── PAID ──────────────────────────────────────── -->
+  <section id="state-paid" aria-live="assertive" aria-label="Pembayaran berhasil">
+    <div class="paid-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+    <h2 class="paid-title">Pembayaran Berhasil!</h2>
+    <p class="paid-subtitle">Terima kasih telah menggunakan layanan kami</p>
+    <div class="paid-amount" id="paid-amount">Rp 0</div>
+    <div class="paid-method" id="paid-method">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <rect x="2" y="5" width="20" height="14" rx="2"/>
+        <path d="M2 10h20"/>
+      </svg>
+      <span id="paid-by-text">QRIS</span>
+    </div>
+    <div class="paid-nopol" id="paid-nopol">-</div>
+  </section>
+
+</div><!-- #app -->
 
 <script>
-(function() {
-  const idleScreen  = document.getElementById('idleScreen');
-  const mainCon     = document.getElementById('mainContainer');
-  const outletName  = document.getElementById('outletName');
-  const notrans     = document.getElementById('notrans');
-  const nopol       = document.getElementById('nopol');
-  const jenisKend   = document.getElementById('jenisKend');
-  const jamMasuk    = document.getElementById('jamMasuk');
-  const durasi      = document.getElementById('durasi');
-  const tarif       = document.getElementById('tarif');
-  const qrisText    = document.getElementById('qrisText');
-  const fotoImg     = document.getElementById('fotoImg');
-  const fotoPh      = document.getElementById('fotoPlaceholder');
-  const statusText  = document.getElementById('statusText');
-  const paidByInfo  = document.getElementById('paidByInfo');
-  const timeEl      = document.getElementById('currentTime');
+// ─── State machine ───────────────────────────────────────────
+const S = {
+  idle:    document.getElementById('state-idle'),
+  waiting: document.getElementById('state-waiting'),
+  paid:    document.getElementById('state-paid'),
+  bgGlow:  document.getElementById('bg-glow'),
+};
 
-  // Clock
-  function updateClock() {
-    const now = new Date();
-    timeEl.textContent = now.toLocaleTimeString('id-ID', { hour12: false });
+let currentStatus = 'idle';
+let paidTimer = null;
+let qrInstance = null;
+let confettiAnimId = null;
+
+function showState(newStatus) {
+  currentStatus = newStatus;
+
+  S.idle.classList.toggle('hidden', newStatus !== 'idle');
+  S.waiting.classList.toggle('active', newStatus === 'waiting');
+  S.paid.classList.toggle('active', newStatus === 'paid');
+  S.bgGlow.classList.toggle('paid', newStatus === 'paid');
+
+  if (newStatus === 'paid') {
+    launchConfetti();
+    paidTimer && clearTimeout(paidTimer);
+    paidTimer = setTimeout(() => showState('idle'), 8000);
+  } else {
+    stopConfetti();
   }
-  setInterval(updateClock, 1000);
-  updateClock();
+}
 
-  function fmtCurrency(n) {
-    return 'Rp ' + Number(n || 0).toLocaleString('id-ID');
-  }
+// ─── Apply data to UI ────────────────────────────────────────
+function applyData(d) {
+  // Outlet name
+  const outlet = d.outlet || 'SISTEM PARKIR';
+  document.getElementById('idle-outlet-name').textContent = outlet;
+  document.getElementById('w-outlet-name').textContent = outlet;
 
-  function applyState(data) {
-    outletName.textContent = data.outlet || 'SISTEM PARKIR';
-
-    if (data.status === 'idle' || (!data.notrans && data.status !== 'active')) {
-      idleScreen.classList.remove('hidden');
-      mainCon.classList.add('hidden');
-      document.title = 'QRIS Display — Idle';
-      return;
-    }
-
-    idleScreen.classList.add('hidden');
-    mainCon.classList.remove('hidden');
-    document.title = 'QRIS Display — ' + (data.nopol || 'Transaksi');
-
-    notrans.textContent   = data.notrans || '—';
-    nopol.textContent     = data.nopol || '—';
-    jenisKend.textContent = data.jenis_kend || '—';
-    jamMasuk.textContent  = data.jam_masuk || '—';
-    durasi.textContent    = data.durasi || '—';
-    tarif.textContent     = fmtCurrency(data.tarif);
-    qrisText.textContent  = data.qris_text || '—';
-    paidByInfo.textContent = data.paid_by ? ('Dibayar: ' + data.paid_by) : '—';
-
-    // Foto
-    if (data.foto_path) {
-      fotoImg.src = '/photo/current?t=' + Date.now();
-      fotoImg.style.display = 'block';
-      fotoPh.style.display = 'none';
-    } else {
-      fotoImg.style.display = 'none';
-      fotoPh.style.display = 'block';
-    }
+  if (d.status === 'idle') {
+    showState('idle');
+    return;
   }
 
-  // SSE
-  const evtSource = new EventSource('/stream');
-  evtSource.onmessage = function(e) {
-    try {
-      const data = JSON.parse(e.data);
-      applyState(data);
-      statusText.textContent = 'Connected';
-    } catch (err) {
-      console.warn('SSE parse error:', err);
-    }
+  // Common fields
+  document.getElementById('w-notrans').textContent = 'No: ' + (d.notrans || '-');
+  document.getElementById('nopol-badge').textContent = d.nopol || '-';
+  document.getElementById('info-jenis').textContent = d.jenis_kend || '-';
+  document.getElementById('info-masuk').textContent = d.jam_masuk || '-';
+  document.getElementById('info-durasi').textContent = d.durasi || '-';
+
+  const tarif = parseInt(d.tarif) || 0;
+  document.getElementById('info-tarif').textContent = formatRupiah(tarif);
+  document.getElementById('qr-amount-big').textContent = formatRupiah(tarif);
+
+  // Photo
+  const photoEl = document.getElementById('vehicle-photo');
+  const noPhotoEl = document.getElementById('no-photo');
+  if (d.notrans) {
+    const url = `/photo/current?t=${Date.now()}`;
+    photoEl.src = url;
+    photoEl.style.display = 'block';
+    noPhotoEl.style.display = 'none';
+    photoEl.onerror = () => {
+      photoEl.style.display = 'none';
+      noPhotoEl.style.display = 'flex';
+    };
+  } else {
+    photoEl.style.display = 'none';
+    noPhotoEl.style.display = 'flex';
+  }
+
+  if (d.status === 'waiting') {
+    // Generate QR
+    generateQR(d.qris_text || '');
+    showState('waiting');
+
+  } else if (d.status === 'paid') {
+    document.getElementById('paid-amount').textContent = formatRupiah(tarif);
+    document.getElementById('paid-by-text').textContent = d.paid_by || 'QRIS';
+    document.getElementById('paid-nopol').textContent = d.nopol || '-';
+    showState('paid');
+  }
+}
+
+// ─── QR Generator ────────────────────────────────────────────
+function generateQR(text) {
+  const box = document.getElementById('qrcode');
+  box.innerHTML = '';
+  if (!text) return;
+
+  // size responsive: 30vmin capped 280px
+  const size = Math.min(280, Math.round(window.innerWidth * 0.28));
+
+  qrInstance = new QRCode(box, {
+    text: text,
+    width: size,
+    height: size,
+    colorDark: '#000000',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M,
+  });
+}
+
+// ─── Clock ───────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  const t = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  document.getElementById('idle-clock').textContent = t;
+  document.getElementById('w-clock').textContent = t;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ─── Rupiah formatter ────────────────────────────────────────
+function formatRupiah(n) {
+  return 'Rp ' + Number(n).toLocaleString('id-ID');
+}
+
+// ─── SSE connection ──────────────────────────────────────────
+function connectSSE() {
+  const es = new EventSource('/stream');
+  es.onmessage = e => {
+    try { applyData(JSON.parse(e.data)); } catch(_) {}
   };
-  evtSource.onerror = function() {
-    statusText.textContent = 'Reconnecting...';
+  es.onerror = () => {
+    es.close();
+    setTimeout(connectSSE, 3000); // reconnect
   };
+}
+connectSSE();
 
-  // Initial fetch fallback
-  fetch('/state').then(r => r.json()).then(applyState).catch(() => {});
-})();
+// ─── Confetti ────────────────────────────────────────────────
+const confCanvas = document.getElementById('confetti-canvas');
+const confCtx = confCanvas.getContext('2d');
+let particles = [];
+
+function resizeConf() {
+  confCanvas.width  = window.innerWidth;
+  confCanvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeConf);
+resizeConf();
+
+function launchConfetti() {
+  particles = [];
+  const colors = ['#2dd4bf','#3fb950','#f0c040','#e6edf3','#60a5fa'];
+  for (let i = 0; i < 120; i++) {
+    particles.push({
+      x: Math.random() * confCanvas.width,
+      y: -10 - Math.random() * 200,
+      w: 6 + Math.random() * 8,
+      h: 10 + Math.random() * 6,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vx: (Math.random() - 0.5) * 3,
+      vy: 2 + Math.random() * 4,
+      rot: Math.random() * 360,
+      vrot: (Math.random() - 0.5) * 6,
+      alpha: 1,
+    });
+  }
+  animateConf();
+}
+
+function animateConf() {
+  confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.rot += p.vrot;
+    if (p.y > confCanvas.height * 0.7) p.alpha -= 0.015;
+    confCtx.save();
+    confCtx.globalAlpha = Math.max(0, p.alpha);
+    confCtx.translate(p.x, p.y);
+    confCtx.rotate(p.rot * Math.PI / 180);
+    confCtx.fillStyle = p.color;
+    confCtx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+    confCtx.restore();
+  });
+  particles = particles.filter(p => p.alpha > 0);
+  if (particles.length > 0) {
+    confettiAnimId = requestAnimationFrame(animateConf);
+  } else {
+    confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+  }
+}
+
+function stopConfetti() {
+  if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+  confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+  particles = [];
+}
 </script>
 </body>
 </html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QRIS Display — SISTEM PARKIR</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0a0a1a;
+    color: #fff;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 100%);
+  }
+  .header {
+    background: linear-gradient(90deg, #1a1a4e, #2a1a5e);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid #00d4ff;
+  }
+  .header h1 {
+    font-size: 2.2rem;
+    letter-spacing: 2px;
+    color: #00d4ff;
+    text-shadow: 0 0 20px rgba(0,212,255,0.3);
+  }
+  .header .time {
+    font-size: 1.8rem;
+    color: #aaa;
+    font-weight: 300;
+  }
+  .main-content {
+    flex: 1;
+    display: flex;
+    padding: 20px;
+    gap: 20px;
+  }
+  .info-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .info-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 20px 30px;
+    backdrop-filter: blur(10px);
+  }
+  .info-card .label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    margin-bottom: 4px;
+  }
+  .info-card .value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .info-card .value.big { font-size: 3rem; }
+  .info-card .value.highlight { color: #00ff88; }
+  .info-card .value.tarif { color: #ffcc00; font-size: 3.5rem; }
+  .qris-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 30px;
+    min-width: 380px;
+  }
+  .qris-section .qris-label {
+    font-size: 0.9rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+  .qris-section .qris-text {
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    color: #00d4ff;
+    word-break: break-all;
+    text-align: center;
+    line-height: 1.5;
+    max-width: 400px;
+  }
+  .qris-section .qris-qr {
+    width: 200px;
+    height: 200px;
+    background: #fff;
+    border-radius: 12px;
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    font-size: 0.8rem;
+  }
+  .photo-panel {
+    width: 420px;
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .photo-panel .photo-frame {
+    flex: 1;
+    background: #111;
+    border-radius: 16px;
+    border: 2px solid rgba(255,255,255,0.1);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+  }
+  .photo-panel .photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .photo-panel .photo-frame .placeholder {
+    color: #555;
+    font-size: 1rem;
+    text-align: center;
+  }
+  .photo-panel .nopol-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+  }
+  .photo-panel .nopol-card .label {
+    font-size: 0.8rem;
+    color: #888;
+    text-transform: uppercase;
+  }
+  .photo-panel .nopol-card .value {
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    color: #ffcc00;
+  }
+  .idle-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    gap: 20px;
+  }
+  .idle-screen h1 {
+    font-size: 4rem;
+    color: #00d4ff;
+    text-shadow: 0 0 40px rgba(0,212,255,0.2);
+  }
+  .idle-screen p {
+    font-size: 1.5rem;
+    color: #666;
+  }
+  .hidden { display: none !important; }
+  .status-bar {
+    padding: 8px 40px;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #666;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .status-bar .dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+  .status-bar .dot.green { background: #00ff88; }
+  .status-bar .dot.red { background: #ff4444; }
+</style>
+</head>
+<body>
+
+<div id="idleScreen" class="idle-screen">
+  <h1>⏳ SISTEM PARKIR</h1>
+  <p>Menunggu transaksi...</p>
+</div>
+
+<div id="mainContainer" class="container hidden">
+  <div class="header">
+    <h1 id="outletName">SISTEM PARKIR</h1>
+    <div class="time" id="currentTime">--:--:--</div>
+  </div>
+
+  <div class="main-content">
+    <!-- Left: Info -->
+    <div class="info-panel">
+      <div class="info-card">
+        <div class="label">No. Transaksi</div>
+        <div class="value big" id="notrans">—</div>
+      </div>
+      <div class="info-card">
+        <div class="label">Jenis Kendaraan</div>
+        <div class="value" id="jenisKend">—</div>
+      </div>
+      <div class="row" style="display:flex;gap:15px;">
+        <div class="info-card" style="flex:1;">
+          <div class="label">Jam Masuk</div>
+          <div class="value" id="jamMasuk">—</div>
+        </div>
+        <div class="info-card" style="flex:1;">
+          <div class="label">Durasi</div>
+          <div class="value highlight" id="durasi">—</div>
+        </div>
+      </div>
+      <div class="info-card" style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+        <div class="label">Tarif Parkir</div>
+        <div class="value tarif" id="tarif">Rp 0</div>
+      </div>
+    </div>
+
+    <!-- Center: QRIS -->
+    <div class="qris-section" id="qrisSection">
+      <div class="qris-label">QRIS Pembayaran</div>
+      <div class="qris-text" id="qrisText">—</div>
+    </div>
+
+    <!-- Right: Photo & Nopol -->
+    <div class="photo-panel">
+      <div class="nopol-card">
+        <div class="label">Nomor Polisi</div>
+        <div class="value" id="nopol">—</div>
+      </div>
+      <div class="photo-frame">
+        <img id="fotoImg" src="" alt="Foto Kendaraan" style="display:none;">
+        <div class="placeholder" id="fotoPlaceholder">📷 Foto kendaraan</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <span><span class="dot green"></span><span id="statusText">Connected</span></span>
+    <span id="paidByInfo">—</span>
+  </div>
+</div>
+
+<script>
+(function() {
+  const idleScreen  = document.getElementById('idleScreen');
+  const mainCon     = document.getElementById('mainContainer');
+  const outletName  = document.getElementById('outletName');
+  const notrans     = document.getElementById('notrans');
+  const nopol       = document.getElementById('nopol');
+  const jenisKend   = document.getElementById('jenisKend');
+  const jamMasuk    = document.getElementById('jamMasuk');
+  const durasi      = document.getElementById('durasi');
+  const tarif       = document.getElementById('tarif');
+  const qrisText    = document.getElementById('qrisText');
+  const fotoImg     = document.getElementById('fotoImg');
+  const fotoPh      = document.getElementById('fotoPlaceholder');
+  const statusText  = document.getElementById('statusText');
+  const paidByInfo  = document.getElementById('paidByInfo');
+  const timeEl      = document.getElementById('currentTime');
+
+  // Clock
+  function updateClock() {
+    const now = new Date();
+    timeEl.textContent = now.toLocaleTimeString('id-ID', { hour12: false });
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  function fmtCurrency(n) {
+    return 'Rp ' + Number(n || 0).toLocaleString('id-ID');
+  }
+
+  function applyState(data) {
+    outletName.textContent = data.outlet || 'SISTEM PARKIR';
+
+    if (data.status === 'idle' || (!data.notrans && data.status !== 'active')) {
+      idleScreen.classList.remove('hidden');
+      mainCon.classList.add('hidden');
+      document.title = 'QRIS Display — Idle';
+      return;
+    }
+
+    idleScreen.classList.add('hidden');
+    mainCon.classList.remove('hidden');
+    document.title = 'QRIS Display — ' + (data.nopol || 'Transaksi');
+
+    notrans.textContent   = data.notrans || '—';
+    nopol.textContent     = data.nopol || '—';
+    jenisKend.textContent = data.jenis_kend || '—';
+    jamMasuk.textContent  = data.jam_masuk || '—';
+    durasi.textContent    = data.durasi || '—';
+    tarif.textContent     = fmtCurrency(data.tarif);
+    qrisText.textContent  = data.qris_text || '—';
+    paidByInfo.textContent = data.paid_by ? ('Dibayar: ' + data.paid_by) : '—';
+
+    // Foto
+    if (data.foto_path) {
+      fotoImg.src = '/photo/current?t=' + Date.now();
+      fotoImg.style.display = 'block';
+      fotoPh.style.display = 'none';
+    } else {
+      fotoImg.style.display = 'none';
+      fotoPh.style.display = 'block';
+    }
+  }
+
+  // SSE
+  const evtSource = new EventSource('/stream');
+  evtSource.onmessage = function(e) {
+    try {
+      const data = JSON.parse(e.data);
+      applyState(data);
+      statusText.textContent = 'Connected';
+    } catch (err) {
+      console.warn('SSE parse error:', err);
+    }
+  };
+  evtSource.onerror = function() {
+    statusText.textContent = 'Reconnecting...';
+  };
+
+  // Initial fetch fallback
+  fetch('/state').then(r => r.json()).then(applyState).catch(() => {});
+})();
+</script>
+</body>
+</html>

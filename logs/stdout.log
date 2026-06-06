@@ -1,0 +1,27 @@
+[INFO] FOTO_DIR = E:/FOTO
+[INFO] OUTLET   = SISTEM PARKIR
+[INFO] Listening on 0.0.0.0:8001
+[INFO] FOTO_DIR = E:/FOTO
+[INFO] OUTLET   = SISTEM PARKIR
+[INFO] Listening on 0.0.0.0:8001
+[INFO] FOTO_DIR = E:/FOTO
+[INFO] OUTLET   = SISTEM PARKIR
+[INFO] Listening on 0.0.0.0:8001
+INFO:     127.0.0.1:1371 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39030 - "GET /state HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39030 - "GET /stream HTTP/1.1" 200 OK
+INFO:     127.0.0.1:25860 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:22592 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:22592 - "GET /stream HTTP/1.1" 200 OK
+INFO:     127.0.0.1:27586 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63503 - "POST /qris/update HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43289 - "GET /photo/current?t=1780739173017 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:43290 - "POST /qris/idle HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43290 - "POST /qris/idle HTTP/1.1" 200 OK
+[INFO] FOTO_DIR = E:/FOTO
+[INFO] OUTLET   = SISTEM PARKIR
+[INFO] Listening on 0.0.0.0:8001
+INFO:     127.0.0.1:10967 - "GET /stream HTTP/1.1" 200 OK
+[INFO] FOTO_DIR = Z:\Foto_Masuk
+[INFO] OUTLET   = SISTEM PARKIR
+[INFO] Listening on 0.0.0.0:8001

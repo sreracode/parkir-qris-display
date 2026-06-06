@@ -1,0 +1,58 @@
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+C:\Users\adinew\AppData\Local\Programs\Python\Python311\python.exe: can't open file 'E:\\Project\\Project': [Errno 2] No such file or directory
+INFO:     Started server process [21756]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [21756]
+INFO:     Started server process [36892]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [36892]
+INFO:     Started server process [25132]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for connections to close. (CTRL+C to force quit)
+INFO:     Started server process [15976]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [15976]
+INFO:     Started server process [9344]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9344]
