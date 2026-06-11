@@ -25,3 +25,30 @@ INFO:     127.0.0.1:10967 - "GET /stream HTTP/1.1" 200 OK
 [INFO] FOTO_DIR = Z:\Foto_Masuk
 [INFO] OUTLET   = SISTEM PARKIR
 [INFO] Listening on 0.0.0.0:8001
+[INFO] FOTO_DIR = E:\foto
+[INFO] OUTLET   = Menara Teratai
+[INFO] Listening on 0.0.0.0:8001
+INFO:     127.0.0.1:64746 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64746 - "GET /stream HTTP/1.1" 200 OK
+INFO:     127.0.0.1:5368 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:1349 - "POST /qris/update HTTP/1.1" 200 OK
+INFO:     127.0.0.1:26764 - "GET /photo/current?t=1780903230801 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:25215 - "POST /qris/idle HTTP/1.1" 200 OK
+INFO:     127.0.0.1:9000 - "POST /qris/update HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47438 - "GET /photo/current?t=1780903633520 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47464 - "POST /qris/idle HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47464 - "POST /qris/idle HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63361 - "POST /qris/update HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62140 - "GET /photo/current?t=1780904149740 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62159 - "POST /qris/update HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44807 - "GET /photo/current?t=1780904171430 HTTP/1.1" 200 OK
+[INFO] FOTO_DIR = E:\foto
+[INFO] OUTLET   = Menara Teratai
+[INFO] Listening on 0.0.0.0:8001
+INFO:     127.0.0.1:28146 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:28146 - "GET /stream HTTP/1.1" 200 OK
+INFO:     127.0.0.1:25250 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59084 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59084 - "GET /stream HTTP/1.1" 200 OK
+INFO:     127.0.0.1:23672 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:48497 - "POST /qris/idle HTTP/1.1" 200 OK
