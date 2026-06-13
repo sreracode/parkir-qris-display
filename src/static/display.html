@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="dark">
+<html lang="id" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#edf3f6">
 <title>QRIS Payment Display</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,26 +34,27 @@
 }
 
 /* Dark theme — deep slate, accent teal */
-[data-theme="dark"] {
-  --bg:         #0d1117;
-  --surface:    #161b22;
-  --surface-2:  #1c2333;
-  --surface-3:  #21262d;
-  --border:     rgba(255,255,255,0.08);
-  --text:       #e6edf3;
-  --text-muted: #8b949e;
-  --text-faint: #484f58;
-  --accent:     #2dd4bf;
-  --accent-dim: rgba(45,212,191,0.15);
-  --accent-glow:rgba(45,212,191,0.25);
-  --success:    #3fb950;
-  --success-dim:rgba(63,185,80,0.15);
-  --success-glow:rgba(63,185,80,0.4);
-  --gold:       #f0c040;
-  --gold-dim:   rgba(240,192,64,0.15);
-  --shadow-sm:  0 1px 3px rgba(0,0,0,0.4);
-  --shadow-md:  0 4px 16px rgba(0,0,0,0.5);
-  --shadow-lg:  0 16px 48px rgba(0,0,0,0.6);
+[data-theme="light"] {
+  color-scheme: light;
+  --bg:          #edf3f6;
+  --surface:     #ffffff;
+  --surface-2:   #e4edf2;
+  --surface-3:   #d9e5eb;
+  --border:      #c6d3dc;
+  --text:        #102a3a;
+  --text-muted:  #526474;
+  --text-faint:  #607282;
+  --accent:      #007c70;
+  --accent-dim:  rgba(0,124,112,0.10);
+  --accent-glow: rgba(0,124,112,0.18);
+  --success:     #16743b;
+  --success-dim: rgba(22,116,59,0.10);
+  --success-glow:rgba(22,116,59,0.20);
+  --gold:        #8b5a00;
+  --gold-dim:    rgba(139,90,0,0.10);
+  --shadow-sm:   0 1px 3px rgba(16,42,58,0.10);
+  --shadow-md:   0 8px 24px rgba(16,42,58,0.12);
+  --shadow-lg:   0 18px 48px rgba(16,42,58,0.14);
 }
 
 /* ─── Reset ─────────────────────────────────────────────────── */
@@ -78,13 +80,13 @@ html, body {
 .bg-glow {
   position: fixed; inset: 0; pointer-events: none; z-index: 0;
   background:
-    radial-gradient(ellipse 60% 40% at 20% 50%, rgba(45,212,191,0.04) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 60% at 80% 50%, rgba(45,212,191,0.03) 0%, transparent 70%);
+    radial-gradient(ellipse 60% 42% at 18% 48%, rgba(0,124,112,0.08) 0%, transparent 72%),
+    radial-gradient(ellipse 52% 62% at 82% 48%, rgba(41,110,142,0.07) 0%, transparent 72%);
   transition: opacity 0.8s var(--transition);
 }
 .bg-glow.paid {
   background:
-    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(63,185,80,0.08) 0%, transparent 70%);
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(22,116,59,0.12) 0%, transparent 70%);
 }
 
 /* ─── IDLE STATE ─────────────────────────────────────────────── */
@@ -109,6 +111,7 @@ html, body {
   color: var(--text);
   letter-spacing: -0.02em;
   text-align: center;
+  text-wrap: balance;
 }
 .idle-subtitle {
   font-size: var(--text-base);
@@ -156,6 +159,9 @@ html, body {
   transition: opacity 0.5s var(--transition);
 }
 #state-waiting.active { opacity: 1; pointer-events: all; }
+#state-waiting.cash-mode {
+  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+}
 
 /* Header bar */
 .w-header {
@@ -212,7 +218,7 @@ html, body {
 
 .nopol-badge {
   position: absolute; bottom: var(--space-3); left: var(--space-3);
-  background: rgba(13,17,23,0.85);
+  background: rgba(255,255,255,0.92);
   backdrop-filter: blur(8px);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -222,6 +228,7 @@ html, body {
   font-weight: 700;
   color: var(--text);
   letter-spacing: 0.08em;
+  box-shadow: var(--shadow-sm);
 }
 
 .info-grid {
@@ -257,6 +264,96 @@ html, body {
   gap: var(--space-5);
 }
 
+.cash-container {
+  display: none;
+  width: 100%;
+  min-height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  padding: var(--space-10);
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg);
+}
+.cash-icon {
+  width: 96px; height: 96px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  color: var(--gold);
+  background: var(--gold-dim);
+  border: 2px solid rgba(139,90,0,0.34);
+}
+.cash-icon svg { width: 52px; height: 52px; }
+.cash-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--gold);
+}
+.cash-instruction {
+  max-width: 30rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+.cash-amount {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--text);
+}
+#state-waiting.cash-mode .qr-container { display: none; }
+#state-waiting.cash-mode .cash-container { display: flex; }
+#state-waiting.cash-mode .polling-dot { background: var(--gold); }
+#state-waiting.preview-mode .qr-container,
+#state-waiting.preview-mode .cash-container { display: none; }
+#state-waiting.preview-mode .preview-container { display: flex; }
+
+.preview-container {
+  display: none;
+  width: 100%;
+  min-height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  padding: var(--space-10);
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg);
+}
+.preview-icon {
+  width: 96px; height: 96px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 2px solid rgba(0,124,112,0.34);
+}
+.preview-icon svg { width: 52px; height: 52px; }
+.preview-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--accent);
+}
+.preview-amount {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--text);
+}
+.preview-instruction {
+  max-width: 30rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
 .qr-container {
   display: flex; flex-direction: column; align-items: center; gap: var(--space-5);
   background: var(--surface);
@@ -276,9 +373,10 @@ html, body {
 
 .qr-box {
   background: #ffffff;
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.1), var(--shadow-md);
+  box-shadow: var(--shadow-md);
   position: relative;
 }
 /* Scanning animation overlay */
@@ -306,6 +404,7 @@ html, body {
   color: var(--text);
   letter-spacing: -0.02em;
   text-align: center;
+  text-wrap: balance;
 }
 .qr-amount-label {
   font-size: var(--text-xs);
@@ -393,7 +492,7 @@ html, body {
   display: flex; align-items: center; gap: var(--space-3);
   padding: var(--space-3) var(--space-6);
   background: var(--success-dim);
-  border: 1px solid rgba(63,185,80,0.3);
+  border: 1px solid rgba(22,116,59,0.30);
   border-radius: var(--radius-full);
   font-size: var(--text-sm);
   color: var(--success);
@@ -426,10 +525,10 @@ html, body {
     0deg,
     transparent,
     transparent 2px,
-    rgba(0,0,0,0.03) 2px,
-    rgba(0,0,0,0.03) 4px
+    rgba(16,42,58,0.025) 2px,
+    rgba(16,42,58,0.025) 4px
   );
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 /* ─── Separator line ─────────────────────────────────────────── */
@@ -437,6 +536,14 @@ html, body {
   width: 1px;
   background: var(--border);
   margin: var(--space-2) 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 </style>
 </head>
@@ -451,12 +558,12 @@ html, body {
   <!-- ── IDLE ─────────────────────────────────────── -->
   <section id="state-idle" aria-live="polite">
     <div class="idle-logo">
-      <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Parkir logo">
-        <rect x="8" y="20" width="64" height="44" rx="6" stroke="#2dd4bf" stroke-width="2.5" fill="rgba(45,212,191,0.06)"/>
-        <path d="M20 32 L20 52" stroke="#2dd4bf" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M20 32 L32 32 C38 32 42 36 42 40 C42 44 38 48 32 48 L20 48" stroke="#2dd4bf" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="56" cy="42" r="8" stroke="#e6edf3" stroke-width="2" opacity="0.3"/>
-        <path d="M52 42 L55 45 L60 39" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Logo parkir" style="color:var(--accent)">
+        <rect x="8" y="20" width="64" height="44" rx="6" stroke="currentColor" stroke-width="2.5" fill="var(--accent-dim)"/>
+        <path d="M20 32 L20 52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M20 32 L32 32 C38 32 42 36 42 40 C42 44 38 48 32 48 L20 48" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="56" cy="42" r="8" stroke="var(--text)" stroke-width="2" opacity="0.32"/>
+        <path d="M52 42 L55 45 L60 39" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       <h1 class="idle-title" id="idle-outlet-name">SISTEM PARKIR</h1>
       <p class="idle-subtitle">Silakan tunjukkan karcis kepada petugas</p>
@@ -474,10 +581,10 @@ html, body {
     <!-- Header -->
     <div class="w-header">
       <div class="w-header-left">
-        <svg width="28" height="28" viewBox="0 0 80 80" fill="none" aria-hidden="true">
-          <rect x="8" y="20" width="64" height="44" rx="6" stroke="#2dd4bf" stroke-width="3" fill="rgba(45,212,191,0.06)"/>
-          <path d="M20 32 L20 52" stroke="#2dd4bf" stroke-width="3" stroke-linecap="round"/>
-          <path d="M20 32 L32 32 C38 32 42 36 42 40 C42 44 38 48 32 48 L20 48" stroke="#2dd4bf" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg width="28" height="28" viewBox="0 0 80 80" fill="none" aria-hidden="true" style="color:var(--accent)">
+          <rect x="8" y="20" width="64" height="44" rx="6" stroke="currentColor" stroke-width="3" fill="var(--accent-dim)"/>
+          <path d="M20 32 L20 52" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <path d="M20 32 L32 32 C38 32 42 36 42 40 C42 44 38 48 32 48 L20 48" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <div>
           <div class="w-outlet-name" id="w-outlet-name">PARKIR</div>
@@ -499,7 +606,7 @@ html, body {
           </svg>
           <span style="font-size:var(--text-xs)">Foto tidak tersedia</span>
         </div>
-        <img id="vehicle-photo" src="" alt="Foto kendaraan" style="display:none"
+        <img id="vehicle-photo" src="" alt="Foto kendaraan" width="1600" height="1000" fetchpriority="high" style="display:none"
              onerror="this.style.display='none';document.getElementById('no-photo').style.display='flex'">
         <div class="nopol-badge" id="nopol-badge">-</div>
       </div>
@@ -539,6 +646,30 @@ html, body {
           Scan dengan aplikasi <strong>e-wallet</strong> atau <strong>mobile banking</strong> apapun
         </div>
       </div>
+      <div class="cash-container" id="cash-container">
+        <div class="cash-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <rect x="2" y="6" width="20" height="12" rx="2"/>
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M6 9h.01M18 15h.01"/>
+          </svg>
+        </div>
+        <div class="cash-title">PEMBAYARAN TUNAI</div>
+        <div class="cash-amount" id="cash-amount">Rp 0</div>
+        <div class="cash-instruction">Silakan lakukan pembayaran tunai kepada petugas parkir.</div>
+      </div>
+      <div class="preview-container" id="preview-container">
+        <div class="preview-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="16" rx="2"/>
+            <path d="M7 9h10M7 13h6"/>
+            <circle cx="17" cy="15" r="2"/>
+          </svg>
+        </div>
+        <div class="preview-title">DETAIL TRANSAKSI PARKIR</div>
+        <div class="preview-amount" id="preview-amount">Rp 0</div>
+        <div class="preview-instruction">Silakan lakukan pembayaran melalui petugas parkir.</div>
+      </div>
     </div>
 
     <!-- Polling indicator footer -->
@@ -548,7 +679,7 @@ html, body {
         <div class="polling-dot"></div>
         <div class="polling-dot"></div>
       </div>
-      <span class="polling-text">Menunggu konfirmasi pembayaran...</span>
+      <span class="polling-text" id="waiting-text">Menunggu konfirmasi pembayaran…</span>
     </div>
 
   </section>
@@ -556,11 +687,11 @@ html, body {
   <!-- ── PAID ──────────────────────────────────────── -->
   <section id="state-paid" aria-live="assertive" aria-label="Pembayaran berhasil">
     <div class="paid-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <polyline points="20 6 9 17 4 12"/>
       </svg>
     </div>
-    <h2 class="paid-title">Pembayaran Berhasil!</h2>
+    <h2 class="paid-title" id="paid-title">Pembayaran Berhasil!</h2>
     <p class="paid-subtitle">Terima kasih telah menggunakan layanan kami</p>
     <div class="paid-amount" id="paid-amount">Rp 0</div>
     <div class="paid-method" id="paid-method">
@@ -592,14 +723,19 @@ let confettiAnimId = null;
 function showState(newStatus) {
   currentStatus = newStatus;
 
+  if (newStatus !== 'paid' && paidTimer !== null) {
+    clearTimeout(paidTimer);
+    paidTimer = null;
+  }
+
   S.idle.classList.toggle('hidden', newStatus !== 'idle');
-  S.waiting.classList.toggle('active', newStatus === 'waiting');
+  S.waiting.classList.toggle('active', newStatus === 'preview' || newStatus === 'waiting');
   S.paid.classList.toggle('active', newStatus === 'paid');
   S.bgGlow.classList.toggle('paid', newStatus === 'paid');
 
   if (newStatus === 'paid') {
     launchConfetti();
-    paidTimer && clearTimeout(paidTimer);
+    if (paidTimer !== null) clearTimeout(paidTimer);
     paidTimer = setTimeout(() => showState('idle'), 8000);
   } else {
     stopConfetti();
@@ -608,6 +744,9 @@ function showState(newStatus) {
 
 // ─── Apply data to UI ────────────────────────────────────────
 function applyData(d) {
+  const paymentMethod = String(d.payment_method || d.paid_by || 'QRIS').toUpperCase();
+  const showQr = paymentMethod === 'QRIS' && Boolean(d.qris_text);
+
   // Outlet name
   const outlet = d.outlet || 'SISTEM PARKIR';
   document.getElementById('idle-outlet-name').textContent = outlet;
@@ -628,6 +767,8 @@ function applyData(d) {
   const tarif = parseInt(d.tarif) || 0;
   document.getElementById('info-tarif').textContent = formatRupiah(tarif);
   document.getElementById('qr-amount-big').textContent = formatRupiah(tarif);
+  document.getElementById('cash-amount').textContent = formatRupiah(tarif);
+  document.getElementById('preview-amount').textContent = formatRupiah(tarif);
 
   // Photo
   const photoEl = document.getElementById('vehicle-photo');
@@ -646,14 +787,29 @@ function applyData(d) {
     noPhotoEl.style.display = 'flex';
   }
 
-  if (d.status === 'waiting') {
-    // Generate QR
-    generateQR(d.qris_text || '');
+  if (d.status === 'preview') {
+    S.waiting.classList.remove('cash-mode');
+    S.waiting.classList.add('preview-mode');
+    document.getElementById('waiting-text').textContent = 'Menunggu proses pembayaran oleh petugas…';
+    generateQR('');
+    showState('preview');
+
+  } else if (d.status === 'waiting') {
+    S.waiting.classList.remove('preview-mode');
+    S.waiting.classList.toggle('cash-mode', !showQr);
+    document.getElementById('waiting-text').textContent = showQr
+      ? 'Menunggu konfirmasi pembayaran…'
+      : 'Menunggu pembayaran tunai kepada petugas…';
+    generateQR(showQr ? d.qris_text : '');
     showState('waiting');
 
   } else if (d.status === 'paid') {
+    S.waiting.classList.remove('cash-mode', 'preview-mode');
+    generateQR('');
     document.getElementById('paid-amount').textContent = formatRupiah(tarif);
-    document.getElementById('paid-by-text').textContent = d.paid_by || 'QRIS';
+    document.getElementById('paid-title').textContent =
+      paymentMethod === 'CASH' ? 'Pembayaran Tunai Berhasil!' : 'Pembayaran QRIS Berhasil!';
+    document.getElementById('paid-by-text').textContent = paymentMethod;
     document.getElementById('paid-nopol').textContent = d.nopol || '-';
     showState('paid');
   }
@@ -720,7 +876,7 @@ resizeConf();
 
 function launchConfetti() {
   particles = [];
-  const colors = ['#2dd4bf','#3fb950','#f0c040','#e6edf3','#60a5fa'];
+  const colors = ['#007c70','#16743b','#c78300','#d9e5eb','#287ca3'];
   for (let i = 0; i < 120; i++) {
     particles.push({
       x: Math.random() * confCanvas.width,

@@ -9,6 +9,8 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, StreamingResponse, FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field, field_validator, model_validator
+from typing import Literal
 import uvicorn
 
 # ─── Load config ─────────────────────────────────────────────
@@ -38,6 +40,7 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 # ─── State global ────────────────────────────────────────────
 current_state = {
     "status": "idle",
+    "payment_method": "QRIS",
     "notrans": "",
     "nopol": "",
     "jenis_kend": "",
@@ -53,6 +56,53 @@ current_state = {
 
 subscribers: list = []
 
+class PaymentUpdate(BaseModel):
+    status: Literal["preview", "waiting", "paid"]
+    payment_method: Literal["QRIS", "CASH"] = "QRIS"
+    notrans: str = ""
+    nopol: str = ""
+    jenis_kend: str = ""
+    jam_masuk: str = ""
+    durasi: str = ""
+    tarif: int = Field(default=0, ge=0)
+    qris_text: str = ""
+    foto_path: str = ""
+    outlet: str = ""
+    paid_by: str = ""
+
+    @field_validator("payment_method", mode="before")
+    @classmethod
+    def normalize_payment_method(cls, value):
+        return str(value or "QRIS").strip().upper()
+
+    @field_validator("status", mode="before")
+    @classmethod
+    def normalize_status(cls, value):
+        return str(value or "").strip().lower()
+
+    @model_validator(mode="after")
+    def validate_qris_text(self):
+        if self.status == "waiting" and self.payment_method == "QRIS" and not self.qris_text.strip():
+            raise ValueError("qris_text wajib diisi untuk pembayaran QRIS waiting")
+        return self
+
+def empty_state():
+    return {
+        "status": "idle",
+        "payment_method": "QRIS",
+        "notrans": "",
+        "nopol": "",
+        "jenis_kend": "",
+        "jam_masuk": "",
+        "durasi": "",
+        "tarif": 0,
+        "qris_text": "",
+        "foto_path": "",
+        "outlet": OUTLET_NAME,
+        "paid_by": "",
+        "timestamp": datetime.now().isoformat(),
+    }
+
 async def broadcast(data: dict):
     payload = f"data: {json.dumps(data)}\n\n"
     dead = []
@@ -65,8 +115,22 @@ async def broadcast(data: dict):
         subscribers.remove(d)
 
 @app.post("/qris/update")
-async def qris_update(request: Request):
-    body = await request.json()
+async def qris_update(update: PaymentUpdate):
+    body = update.model_dump()
+    if body["status"] == "paid":
+        provided_fields = update.model_fields_set
+        method = body.get("payment_method", "QRIS")
+        if "payment_method" not in provided_fields and body.get("paid_by"):
+            method = body["paid_by"]
+        method = str(method or "QRIS").upper()
+        body["payment_method"] = method
+        body["paid_by"] = body.get("paid_by") or method
+        body["qris_text"] = ""
+    elif body["status"] == "preview" or body["payment_method"] == "CASH":
+        body["qris_text"] = ""
+
+    current_state.clear()
+    current_state.update(empty_state())
     current_state.update(body)
     current_state["timestamp"] = datetime.now().isoformat()
     await broadcast(current_state.copy())
@@ -74,10 +138,8 @@ async def qris_update(request: Request):
 
 @app.post("/qris/idle")
 async def qris_idle():
-    current_state.update({
-        "status": "idle", "notrans": "", "nopol": "",
-        "qris_text": "", "foto_path": ""
-    })
+    current_state.clear()
+    current_state.update(empty_state())
     await broadcast(current_state.copy())
     return JSONResponse({"ok": True})
 
